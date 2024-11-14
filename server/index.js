@@ -19,12 +19,20 @@ app.get('/',(req,res)=>{
 })
 
 // apis
-app.use('/api',router)
+app.use('/api',router);
 
 const PORT = process.env.PORT || 8080;
 
-connectDB.then(()=>{
+connectDB().then(()=>{
 app.listen(PORT ,() =>{
     console.log(`Server is running on port : ${PORT}`)
 })
 })
+// // Call connectDB() to start the connection
+// connectDB().then(() => {
+//     app.listen(PORT, () => {
+//         console.log(`Server is running on port : ${PORT}`);
+//     });
+// }).catch(error => {
+//     console.error('Failed to connect to the database:', error);
+// });
