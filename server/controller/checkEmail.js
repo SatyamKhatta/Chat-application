@@ -10,6 +10,11 @@ async function checkEmail(req,res){
             error:true
            })
         }
+        return res.status(201).json({
+            message: "email verify success",
+            success : true ,
+            data:checkEmail
+        })
     } catch (error) {
         return res.status(500).json( {
             message : error.message || error,
@@ -17,3 +22,5 @@ async function checkEmail(req,res){
         })
     }
 }
+
+module.exports = checkEmail
