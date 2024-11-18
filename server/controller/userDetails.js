@@ -11,3 +11,5 @@ async function userDetails(req,res){
         })
     }
 }
+
+module.exports(userDetails)

@@ -3,6 +3,7 @@ const registerUser = require('../controller/registerUser')
 const checkEmail = require('../controller/checkEmail')
 const checkPassword = require('../controller/checkPassword')
 
+
 const router = express.Router()
 
 // create user api
@@ -11,6 +12,8 @@ router.post('/register',registerUser)
 router.post('/email',checkEmail)
 // check user password
 router.post('/password',checkPassword)
+// login user detail
+router.get('/user-details',userDetails)
 
 
 module.exports= router
