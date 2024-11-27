@@ -8,11 +8,12 @@ const getUserDetailsFromToken = async(token)=>{
         }
     }
     const decode =await jwt.verify(token,process.env.JWT_SECREATKEY);
+    console.log(decode)
 
-    const user = await UserModel.findById(decode.id)
-
+    const user = await UserModel.findById(decode.id).select('-password');
     return user;
 }
 
 
 module.exports = getUserDetailsFromToken;
+

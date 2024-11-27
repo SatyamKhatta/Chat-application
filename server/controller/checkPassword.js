@@ -10,7 +10,7 @@ async function checkPassword(req,res) {
         const verifyPassword = await bcryptjs.compare(password,user.password)
         
         if(!verifyPassword) {
-            return res.status(401).json({
+            return res.status(400).json({
                 message: "password is not correct ",
                 error: true,
             })
@@ -18,14 +18,14 @@ async function checkPassword(req,res) {
 
 
         const tokendata ={
-            id:user.i_id,
+            id:user._id,
             email : user.email
         }
 
         const token = await jwt.sign(tokendata,process.env.JWT_SECREATKEY,{expiresIn :'1d'})
 
         const cookieOptions= {
-            http:true,
+            httpOnly:true,
             secure:true,
         }
 
@@ -44,3 +44,5 @@ async function checkPassword(req,res) {
 }
 
 module.exports = checkPassword
+
+
