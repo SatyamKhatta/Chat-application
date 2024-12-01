@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { closeIcon } from "react-icons/io";
+import { IoMdCloseCircle } from "react-icons/io";
+import { Link } from 'react-router-dom';
 
 const RegisterPage = () => {
 
@@ -26,17 +27,33 @@ const RegisterPage = () => {
     setUploadPhoto(file)
   }
 
+
   console.log("uploadphoto",uploadPhoto)
+
+  const handleClearUploadPhoto =(e) =>{
+
+    e.stopPropagation()
+    
+    e.preventDefault()
+    setUploadPhoto(null)
+
+  }
+
+  const handleSubmit =(e)=>{
+      e.preventDefault()
+      e.stopPropagation()
+      console.log("data",data)
+  }
 
   return (
 
     <div className='mt-5'>
-     <div className='bg-white w-full max-w-sm rounded overflow-hidden p-4'>
+     <div className='bg-white w-full max-w-sm rounded overflow-hidden p-4 mx-auto'>
       <h3>
         welcome to chat application !!  
       </h3>
 
-          <form className='grid gap-4 mt-5 '>
+          <form className='grid gap-4 mt-5 ' onSubmit={handleSubmit}>
             <div className='flex flex-col'>
               <label htmlFor='name'>Name : </label>
               <input
@@ -54,26 +71,26 @@ const RegisterPage = () => {
             <div className='flex flex-col'>
               <label htmlFor='email'>Email : </label>
               <input
-              type='Email'
-              id='Email'
-              name='Email'
+              type='email'
+              id='email'
+              name='email'
               placeholder='enter your Email'
               className='bg-slate-100 px-2 py-2 focus:outline-primary'
-              value={data.Email}
+              value={data.email}
               onChange={handleOnChange}
               required
 
               />
             </div>
             <div className='flex flex-col'>
-              <label htmlFor='Password'>Password : </label>
+              <label htmlFor='password'>Password : </label>
               <input
-              type='Password'
-              id='Password'
-              name='Password'
+              type='password'
+              id='password'
+              name='password'
               placeholder='enter your Password'
               className='bg-slate-100 px-2 py-2 focus:outline-primary'
-              value={data.profile_pic}
+              value={data.password}
               onChange={handleOnChange}
               required
 
@@ -85,12 +102,17 @@ const RegisterPage = () => {
                 <div className='h-14 bg-slate-100 flex justify-center items-center border rounded hover:border-primary cursor-pointer'>
                   <p className='text-sm'>
                     {
-                      uploadPhoto.name ? uploadPhoto?.name : "Upload profile photo "
+                      uploadPhoto?.name ? uploadPhoto?.name : "Upload profile photo "
                     }
                   </p>
-                  <button>
-                    <closeIcon/>
-                  </button>
+                  {
+                    uploadPhoto?.name && (
+                      <button className='text-xl ml-2 hover:text-red-600' onClick={handleClearUploadPhoto}>
+                      <IoMdCloseCircle/>
+                    </button>
+                    )
+                  }
+                 
 
                 </div>
               </label>
@@ -102,7 +124,11 @@ const RegisterPage = () => {
               onChange={handleUploadPhoto}
               />
             </div>
+            <button className='bg-primary text-lg px-4 py-1 hover:bg-secondary rounded mt-2 font-bold text-white leading-relaxed tracking-wide'>
+              Register
+            </button>
           </form>
+          <p className='my-3 text-center'>Already have an account ? <Link to={"/email"} className='hover:text-primary font-semibold '>Login</Link> </p>
      </div>
     </div>
   )
