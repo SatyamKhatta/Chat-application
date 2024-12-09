@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { IoMdCloseCircle } from "react-icons/io";
 import { Link } from 'react-router-dom';
+import uploadFile from '../helpers/uploadFiles';
 
 const RegisterPage = () => {
 
@@ -22,13 +23,19 @@ const RegisterPage = () => {
         }
      })
   }
-  const handleUploadPhoto =(e)=>{
+  const handleUploadPhoto =async(e)=>{
     const file =e.target.files[0]
+
+    const uploadPhoto = await uploadFile(file)
     setUploadPhoto(file)
+    setdata((preve)=>{
+      return {
+        ...preve,
+        profile_pic:uploadPhoto?.url
+      }
+    })
   }
 
-
-  console.log("uploadphoto",uploadPhoto)
 
   const handleClearUploadPhoto =(e) =>{
 
@@ -48,7 +55,7 @@ const RegisterPage = () => {
   return (
 
     <div className='mt-5'>
-     <div className='bg-white w-full max-w-sm rounded overflow-hidden p-4 mx-auto'>
+     <div className='bg-white w-full max-w-md mx:2 rounded overflow-hidden p-4 md:mx-auto'>
       <h3>
         welcome to chat application !!  
       </h3>
@@ -115,7 +122,7 @@ const RegisterPage = () => {
                  
 
                 </div>
-              </label>
+              </label>  
               <input
               type='file'
               id='profile_pic'
