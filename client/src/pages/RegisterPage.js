@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { IoMdCloseCircle } from "react-icons/io";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import uploadFile from '../helpers/uploadFiles';
+import axios from 'axios'
+import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
 
@@ -13,6 +15,7 @@ const RegisterPage = () => {
 
   })
   const [uploadPhoto,setUploadPhoto]=useState("")
+  const navigate = useNavigate()
 
   const handleOnChange =(e)=>{
      const {name,value} = e.target
@@ -46,9 +49,30 @@ const RegisterPage = () => {
 
   }
 
-  const handleSubmit =(e)=>{
+  const handleSubmit =async(e)=>{
       e.preventDefault()
       e.stopPropagation()
+      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/register`
+      try {
+        const response = await axios.post(URL,data)
+
+        toast.success(response.data.message)
+
+        if(response.data.success){
+          setdata({
+            name:"",
+            email:"",
+            password:"",
+            profile_pic:""
+        
+          })
+          navigate("/email")
+        }
+        
+      } catch (error) {
+      const errorMessage = error?.response?.data?.message || "An error occurred";
+    toast.error(errorMessage);
+      }
       console.log("data",data)
   }
 
