@@ -10,8 +10,12 @@ app.use(express.json());
 app.use(cookiesParser())
 
 app.use(cors({
-    origin: process.env.Frontend_url,
-    credential:true
+    // origin: process.env.Frontend_url,
+    // credential:true
+    origin: 'http://localhost:3000',  // Allow requests from the frontend
+   methods: 'GET,POST,PUT,DELETE',  // Allowed HTTP methods
+   allowedHeaders: 'Content-Type, Authorization',  // Allowed headers
+   credentials: true,  // Allow cookies and credentials to be sent
 }))
 
 app.get('/',(req,res)=>{

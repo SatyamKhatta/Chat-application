@@ -1,13 +1,13 @@
 
-
 import React, { useEffect, useState } from 'react'
 import { IoMdCloseCircle } from "react-icons/io";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import uploadFile from '../helpers/uploadFiles';
 import axios from 'axios'
 import toast from 'react-hot-toast';
-import { PiUserCircle } from "react-icons/pi";
 import Avatar from '../components/Avatar';
+import { useDispatch } from 'react-redux';
+import { setToken, setUser } from '../redux/userSlice';
 
 
 
@@ -20,6 +20,7 @@ const CheckPasswordPage = () => {
   })
   const navigate = useNavigate()
   const location = useLocation();
+  const dispatch=useDispatch()
   console.log("location  :  ",location.state)
 
   useEffect(()=>{
@@ -44,11 +45,22 @@ const CheckPasswordPage = () => {
       e.stopPropagation()
       const URL = `${process.env.REACT_APP_BACKEND_URL}/api/password`
       try {
-        const response = await axios.post(URL,data)
+        const response = await axios({
+          method:'post',
+          url:URL,
+          data: {
+            userId:location?.state?._id,
+            password:data.password
+          },
+          withCredentials:true
+        })
 
         toast.success(response.data.message)
 
+       
         if(response.data.success){
+          dispatch(setToken(response?.data?.token))
+          localStorage.setItem('token',response?.data?.token)
           setdata({
             
             password:"",

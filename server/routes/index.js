@@ -7,6 +7,8 @@ const logout = require('../controller/logout')
 const updateUserDetails = require('../controller/updateUserDetails')
 
 
+
+
 const router = express.Router()
 
 // create user api
@@ -20,7 +22,7 @@ router.get('/user-details',userDetails)
 // logout user  
 router.get('/logout',logout)
 // update the user 
-router.put('/updateUser',updateUserDetails)
+router.post('/updateUser',updateUserDetails)
 
 
 module.exports= router
