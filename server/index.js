@@ -4,8 +4,9 @@ require('dotenv').config;
 const connectDB =require('./config/connectDB')
 const router = require('./routes/index')
 const cookiesParser = require('cookie-parser')
+const {app ,server} = require('./socket/index')
 
-const app = express();
+// const app = express();
 app.use(express.json());
 app.use(cookiesParser())
 
@@ -13,8 +14,6 @@ app.use(cors({
     // origin: process.env.Frontend_url,
     // credential:true
     origin: 'http://localhost:3000',  // Allow requests from the frontend
-   methods: 'GET,POST,PUT,DELETE',  // Allowed HTTP methods
-   allowedHeaders: 'Content-Type, Authorization',  // Allowed headers
    credentials: true,  // Allow cookies and credentials to be sent
 }))
 
@@ -30,7 +29,7 @@ app.use('/api',router);
 const PORT = process.env.PORT || 8080;
 
 connectDB().then(()=>{
-app.listen(PORT ,() =>{
+    server.listen(PORT ,() =>{
     console.log(`Server is running on port : ${PORT}`)
 })
 })
