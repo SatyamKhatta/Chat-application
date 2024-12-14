@@ -1,6 +1,9 @@
 import React from 'react'
 import { PiUserCircle } from "react-icons/pi";
+import { useSelector } from 'react-redux';
 const Avatar = ({userId,imageUrl,width,height,name}) => {
+
+    const onlineUser = useSelector(state => state?.user?.onlineUser)
 
     let avatarname= ""
     if(name){
@@ -9,7 +12,7 @@ const Avatar = ({userId,imageUrl,width,height,name}) => {
             avatarname = splitname[0][0] + splitname[1][0]
         }
         else{
-            avatarname = splitname[0][0]
+            avatarname = splitname[0][0]    
         }
     }
 
@@ -24,9 +27,10 @@ const Avatar = ({userId,imageUrl,width,height,name}) => {
 
     // used for changing the background color
     const randomcolor= Math.floor(Math.random()*6)
+    const isOnline = onlineUser.includes(userId)
     
   return (
-    <div className={`text-slate-800 overflow-hidden rounded-full  text-xl font-bold ` }style={{width : width+"px", height : height+"px",}}>
+    <div className={`text-slate-800  rounded-full  text-xl font-bold relative` }style={{width : width+"px", height : height+"px",}}>
             {
                 imageUrl ? (
                     <img 
@@ -46,6 +50,12 @@ const Avatar = ({userId,imageUrl,width,height,name}) => {
                     )
                 )
             }
+            {
+                isOnline && (
+                    <div className='bg-green-600 p-1 absolute -right-1 bottom-0 z-10 rounded-full'></div>
+                )
+            }
+            
       
     </div>
   )
