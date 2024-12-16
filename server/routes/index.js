@@ -23,7 +23,7 @@ router.get('/user-details',userDetails)
 // logout user  
 router.get('/logout',logout)
 // update the user 
-router.post('/updateUser',updateUserDetails)
+router.put('/updateUser',updateUserDetails)
 // search the user 
 router.post('/searchUser',searchUser)
 

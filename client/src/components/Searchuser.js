@@ -33,7 +33,7 @@ const Searchuser = ({onClose}) => {
   console.log("search user : ",searchUser)
 
   return (
-    <div className='fixed top-0 bottom-0 left-0 right-0 bg-slate-700 bg-opacity-40'>
+    <div className='fixed top-0 bottom-0 left-0 right-0 bg-slate-700 bg-opacity-40 p-2 z-10'>
          <div className='w-full max-w-md mx-auto mt-10 '>
             {/* input search user */}
             <div className='bg-white rounded  overflow-hidden flex justify-center items-center'>

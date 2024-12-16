@@ -41,6 +41,7 @@ io.on('connection',async(socket)=>{
         _id:userDetails?._id,
         name:userDetails?.name,
         email:userDetails?.email,
+        profile_pic:userDetails?.profile_pic,
         online:onlineUser.has(userId),
     }
     socket.emit('message-user',payload)

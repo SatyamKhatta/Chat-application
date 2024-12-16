@@ -9,8 +9,10 @@ import { setUser } from '../redux/userSlice'
 
 const EditUserDetails = ({onClose,user}) => {
     const [data,setData]=useState({
-        name : user?.user,
-        profile_pic : user?.user 
+        // name : user?.user,
+        name : user?.name || '',
+        // profile_pic : user?.user 
+        profile_pic : user?.profile_pic || '' 
     })
     const uploadPhotoref=useRef()
     const dispatch=useDispatch()
@@ -40,25 +42,40 @@ useEffect(()=>{
         e.stopPropagation();
         uploadPhotoref.current.click()
     }
-    const handleUploadPhoto =async(e)=>{
-        const file =e.target.files[0]
+    // const handleUploadPhoto =async(e)=>{
+    //     const file =e.target.files[0]
     
-        const uploadPhoto = await uploadFile(file)
-        setData((preve)=>{
-          return {
-            ...preve,
-            profile_pic:uploadPhoto?.url
-          }
-        })
-      }
+    //     const uploadPhoto = await uploadFile(file)
+    //     console.log("uploadphoto in edit user ", uploadPhoto)
+    //     setData((preve)=>{
+    //       return {
+    //         ...preve,
+    //         profile_pic:uploadPhoto?.url
+    //       }
+    //     })
+    //   }
+    const handleUploadPhoto = async (e) => {
+        const file = e.target.files[0];
+        const uploadPhoto = await uploadFile(file);
+        if (uploadPhoto?.url) {
+            setData((prev) => ({
+                ...prev,
+                profile_pic: uploadPhoto.url,
+            }));
+        } else {
+            toast.error('Failed to upload photo');
+        }
+    };
+    
 
    const handleSubmit=async(e)=>{
     e.preventDefault();
     e.stopPropagation();
+    console.log("Data to submit:", data); // Debugging log
     try {
         const URL= `${process.env.REACT_APP_BACKEND_URL}/api/updateUser`
         const response= await axios({
-            method:'post',
+            method:'put',
             url : URL,
             data : data,
             withCredentials:true
@@ -67,19 +84,34 @@ useEffect(()=>{
 
         toast.success(response.data.message)
          
-        if(response.data.success){
-            dispatch(setUser(response.data.data))
-            onClose()
+    //     if(response.data.success){
+    //         dispatch(setUser(response.data.data))
+    //         onClose()
+    //     }
+        
+    // } catch (error) {
+        
+    //     toast.error(error?.response?.data?.message || " error in edit section")
+    // }
+
+            if (response.data.success) {
+                console.log("Response from backend:", response.data); // Debugging response
+                dispatch(setUser(response.data.data)); // Update Redux state
+
+                // Close modal only after Redux update
+                toast.success(response.data.message);
+                onClose();
+            } else {
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            console.error("Error during update:", error.response?.data || error.message);
+            toast.error(error?.response?.data?.message || 'Error in edit section');
         }
-        
-    } catch (error) {
-        
-        toast.error(error?.response?.data?.message || " error in edit section")
-    }
-   }   
+        }   
     
   return (
-    <div className='fixed top-0 bottom-0 left-0 right-0 bg-gray-700 bg-opacity-40 flex justify-center items-center'>
+    <div className='fixed top-0 bottom-0 left-0 right-0 bg-gray-700 bg-opacity-40 flex justify-center items-center z-10'>
      <div className='bg-white p-4 py-6 m-1 rounded w-full max-w-sm'>
         <h2 className='font-semibold'>profile details</h2>
         <p className='text-sm'> Edit user details</p>
