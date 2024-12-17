@@ -24,6 +24,7 @@ const Avatar = ({userId,imageUrl,width,height,name}) => {
         'bg-yellow-200',
         'bg-green-500'
     ]
+    
 
     // used for changing the background color
     const randomcolor= Math.floor(Math.random()*6)
