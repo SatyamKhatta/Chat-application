@@ -4,6 +4,7 @@ const http = require('http')
 const getUserDetailsFromToken = require('../helpers/getUserDetailsFromToken')
 const { set } = require('mongoose')
 const UserModel = require('../models/UserModel')
+const {ConversationModel}=require('../models/ConversationModel')
 
 const app = express()
 
@@ -45,6 +46,14 @@ io.on('connection',async(socket)=>{
         online:onlineUser.has(userId),
     }
     socket.emit('message-user',payload)
+   })
+   socket.on('new message',async(data)=>{
+
+    // check conversation
+    const conversation = await ConversationModel.find
+
+
+    console.log("new message  : ",data)
    })
 
     // disconnect 
