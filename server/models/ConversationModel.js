@@ -40,9 +40,9 @@ const conversationSchema = new mongoose.Schema({
 })
 
 const MessageModel = mongoose.model('Message',messageSchema)
-const ConversionModel = mongoose.model('conversation',conversationSchema)
+const ConversationModel = mongoose.model('conversation',conversationSchema)
 
 module.exports= {
     MessageModel,
-    ConversionModel
+    ConversationModel
 }
