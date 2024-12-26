@@ -62,4 +62,6 @@ const Avatar = ({userId,imageUrl,width,height,name}) => {
   )
 }
 
+
+
 export default Avatar
