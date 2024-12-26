@@ -4,7 +4,8 @@ const http = require('http')
 const getUserDetailsFromToken = require('../helpers/getUserDetailsFromToken')
 const { set } = require('mongoose')
 const UserModel = require('../models/UserModel')
-const {ConversationModel}=require('../models/ConversationModel')
+const { ConversationModel } = require('../models/ConversationModel');
+
 
 const app = express()
 
@@ -47,12 +48,21 @@ io.on('connection',async(socket)=>{
     }
     socket.emit('message-user',payload)
    })
+//    new message
    socket.on('new message',async(data)=>{
 
     // check conversation
-    const conversation = await ConversationModel.find
+    const conversation = await ConversationModel.findOne({
+        "$or" : [
+            {sender : data?.sender , receiver : data?.receiver},
+            {sender : data?.receiver , receiver : data?.sender}
+        ]
+    })
+       
+    // if conversation is not available 
+    
 
-
+    console.log("conversation  : ",conversation)
     console.log("new message  : ",data)
    })
 
