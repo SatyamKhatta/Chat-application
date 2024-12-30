@@ -1,0 +1,40 @@
+name: Client CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test Client
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Check out the repository code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Node.js environment
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Use the same version as your dependencies
+
+    # Step 3: Install dependencies
+    - name: Install Dependencies
+      run: npm install
+
+    # Step 4: Run Lint
+    - name: Run Lint
+      run: npm run lint
+      continue-on-error: true # Avoid failing if linting isn't critical yet
+
+    # Step 5: Run Build
+    - name: Build Application
+      run: npm run build
+
+    

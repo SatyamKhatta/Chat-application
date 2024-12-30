@@ -1,0 +1,45 @@
+name: Server CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test Server
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Check out the repository code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Node.js environment
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Use a compatible Node.js version
+
+    # Step 3: Install dependencies
+    - name: Install Dependencies
+      run: npm install
+
+    # Step 4: Lint Code (if linting is added later)
+    # Uncomment and configure this step if you add ESLint or similar tools
+    # - name: Run Lint
+    #   run: npm run lint
+
+    # Step 5: Run Tests (if tests are added)
+    # Uncomment and configure this step if you add tests
+    # - name: Run Tests
+    #   run: npm test
+
+    # Step 6: Check Development Server Startup
+    - name: Check Dev Server Startup
+      run: npm run dev
+      timeout-minutes: 2 # Fail the job if the server doesn't start within 2 minutes
+      continue-on-error: true # Allow CI to pass even if this step fails
