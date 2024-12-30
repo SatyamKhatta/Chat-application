@@ -26,20 +26,12 @@ jobs:
 
     # Step 3: Install dependencies
     - name: Install Dependencies
+      working-directory: server
       run: npm install
-
-    # Step 4: Lint Code (if linting is added later)
-    # Uncomment and configure this step if you add ESLint or similar tools
-    # - name: Run Lint
-    #   run: npm run lint
-
-    # Step 5: Run Tests (if tests are added)
-    # Uncomment and configure this step if you add tests
-    # - name: Run Tests
-    #   run: npm test
 
     # Step 6: Check Development Server Startup
     - name: Check Dev Server Startup
+      working-directory: server
       run: npm run dev
       timeout-minutes: 2 # Fail the job if the server doesn't start within 2 minutes
       continue-on-error: true # Allow CI to pass even if this step fails

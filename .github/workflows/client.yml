@@ -22,10 +22,11 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20.11.0' # Use the same version as your dependencies
+        node-version: '20.11.0' 
 
     # Step 3: Install dependencies
     - name: Install Dependencies
+      working-directory: client
       run: npm install
 
     # Step 4: Run Lint
@@ -35,6 +36,7 @@ jobs:
 
     # Step 5: Run Build
     - name: Build Application
+      working-directory: client
       run: npm run build
 
     
