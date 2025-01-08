@@ -4,7 +4,8 @@ const http = require('http')
 const getUserDetailsFromToken = require('../helpers/getUserDetailsFromToken')
 const { set } = require('mongoose')
 const UserModel = require('../models/UserModel')
-const { ConversationModel } = require('../models/ConversationModel');
+const { ConversationModel,MessageModel } = require('../models/ConversationModel');
+const { log } = require('console')
 
 
 const app = express()
@@ -29,7 +30,7 @@ io.on('connection',async(socket)=>{
    const user = await getUserDetailsFromToken(token)
     
     //    create a room
-   socket.join(user?._id)
+   socket.join(user?._id.toString())
    onlineUser.add(user?._id?.toString())
 
    io.emit('onlineUser',Array.from(onlineUser))
@@ -47,12 +48,24 @@ io.on('connection',async(socket)=>{
         online:onlineUser.has(userId),
     }
     socket.emit('message-user',payload)
+
+      //get previous message
+      const getConversationMessage = await ConversationModel.findOne({
+        "$or" : [
+            { sender : user?._id, receiver : userId },
+            { sender : userId, receiver :  user?._id}
+        ]
+    }).populate('message').sort({ updatedAt : -1 })
+
+    socket.emit('message',getConversationMessage?.message || [])
    })
+
+   
 //    new message
    socket.on('new message',async(data)=>{
 
     // check conversation
-    const conversation = await ConversationModel.findOne({
+    let conversation = await ConversationModel.findOne({
         "$or" : [
             {sender : data?.sender , receiver : data?.receiver},
             {sender : data?.receiver , receiver : data?.sender}
@@ -60,12 +73,68 @@ io.on('connection',async(socket)=>{
     })
        
     // if conversation is not available 
-    
+    if(!conversation) {
+      const createConversation = await ConversationModel({
+        sender : data?.sender,
+        receiver : data?.receiver
+      })
+      conversation = await createConversation.save();
+    }
 
-    console.log("conversation  : ",conversation)
-    console.log("new message  : ",data)
+    const message = new MessageModel({
+        
+          text : data.text,
+          imageUrl : data.imageUrl,
+          videoUrl : data.videoUrl,
+          msgByUserId : data?.msgByUserId
+
+    })
+
+    const saveMessage = await message.save()
+
+    const updateConversation = await ConversationModel.updateOne({_id : conversation?._id},{
+        "$push": {message: saveMessage._id}
+    })
+
+    const getConversationMessage = await ConversationModel.findOne({
+        "$or" : [
+            {sender : data?.sender , receiver : data?.receiver},
+            {sender : data?.receiver , receiver : data?.sender}
+        ]
+    }).populate('message').sort({ updatedAt: -1});    //sort message in decreasing order
+  
+    io.to(data?.sender).emit('message',getConversationMessage.message)
+    io.to(data?.receiver).emit('message',getConversationMessage.message)
+    // console.log("conversation  : ",conversation)
+    // console.log("new message  : ",data)
    })
 
+    //  sidebar
+    socket.on('sidebar',async(currentUserId)=>{
+        console.log("current user id ",currentUserId)
+
+        const currentUserConversation= await ConversationModel.find({
+            "$or": [
+                {sender:currentUserId},
+                {receiver:currentUserId} 
+            ]
+        }).sort({ updatedAt: -1 }).populate('message').populate('sender').populate('receiver')
+
+        console.log("currentUserConversation",currentUserConversation)
+         
+        
+        const conversation = currentUserConversation.map((conv)=>{
+        const countUnseenMsg = conv.message.reduce((preve,curr) => preve + (curr.seen ? 0 : 1),0)
+            return{
+                _id:conv?._id,
+                sender:conv?.sender,
+                receiver:conv?.receiver,
+                unseenMsg : countUnseenMsg,
+                lastMsg : conv.message[conv?.message?.length - 1]
+            }
+        })
+        socket.emit("conversation",conversation)
+    })
     // disconnect 
     socket.on('disconnect',()=>{
         onlineUser.delete(user?._id)
