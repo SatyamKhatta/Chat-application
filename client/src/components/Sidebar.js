@@ -4,7 +4,9 @@ import {FaUserPlus} from "react-icons/fa";
 import { NavLink } from 'react-router-dom';
 import { isAction } from '@reduxjs/toolkit';
 import { BiLogOut } from "react-icons/bi";
-import Avatar from './Avatar';
+import Avatar from './Avatar';  
+import { FaImage } from "react-icons/fa6";
+import { FaVideo } from "react-icons/fa6";
 import { useSelector } from 'react-redux';
 import EditUserDetails from './EditUserDetails';
 import { FiArrowUpLeft } from "react-icons/fi";
@@ -29,6 +31,29 @@ const Sidebar = () => {
                 socketConnection.emit('sidebar', user._id);
                 socketConnection.on('conversation',(data)=>{
                     console.log("conversation",data)
+
+                    const conversationUserData = data.map((conversationUser,index)=>{
+
+                        if(conversationUser?.sender?._id === conversationUser?.receiver?._id){
+                            return{
+                                ...conversationUser,
+                                userDetails:conversationUser.sender
+                            }
+                        }
+                        else if(conversationUser?.receiver?._id !== user?._id){
+                            return{
+                                ...conversationUser,
+                                userDetails:conversationUser.receiver
+                            }
+                        }else{
+                            return{
+                                ...conversationUser,
+                                userDetails:conversationUser.sender
+                            }
+                        }
+                       
+                    })
+                    setAllUser(conversationUserData)
                 })
             } else {
                 console.error('Invalid user._id:', user._id);
@@ -89,6 +114,49 @@ return (
                              <p className='text-lg text-center text-slate-400'>Explore user to start a conversation with.</p>
                         </div>
                    )
+                }
+                {
+                    allUser.map((conv,index)=>{
+                        return(
+                            // to={"/"+conv.userDetails._id}  chnage the user when click on it
+                            <NavLink to={"/"+conv.userDetails._id} key={conv?._id} className='flex items-center py-3 px-2 gap-2 p-2 border hover:border-primary rounded hover:bg-slate-200 cursor-pointer'>  
+                                <div>
+                                    <Avatar
+                                    imageUrl={conv.userDetails.profile_pic}
+                                    name={conv?.userDetails?.name}
+                                    width={40}
+                                    height={50}
+                                    />
+                                    </div>
+                                    <div>
+                                       <h3 className='text-ellipsis line-clamp-1 font-semibold text-base'>{conv?.userDetails?.name}</h3> 
+                                       <div className='text-slate-500 text-xs flex items-center gap-1'>
+                                        <div>
+                                             {
+                                                conv.lastMsg.imageUrl &&(
+                                                  <div className='flex items-center gap-1'>
+                                                      <span><FaImage/></span>
+                                                      {!conv?.lastMsg?.text  && <span>Video</span>}  
+                                                  </div>
+                                                )
+                                             }
+                                              {
+                                                conv.lastMsg.videoUrl &&(
+                                                  <div className='flex items-center gap-1'>
+                                                      <span><FaVideo
+                                                      /></span>
+                                                    {!conv?.lastMsg?.text  && <span>Video</span>}  
+                                                  </div>
+                                                )
+                                             }
+                                        </div>
+                                       <p>{conv?.lastMsg?.text }</p>
+                                        </div>
+                                        </div>
+                                        <p className='text-xs p-1 ml-auto w-6 h-6 flex justify-center bg-primary text-white rounded-full font-semibold'>{conv?.unseenMsg}</p>
+                                </NavLink>
+                        )
+                    })
                 }
           </div>
                

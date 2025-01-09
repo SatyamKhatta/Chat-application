@@ -6,6 +6,7 @@ const { set } = require('mongoose')
 const UserModel = require('../models/UserModel')
 const { ConversationModel,MessageModel } = require('../models/ConversationModel');
 const { log } = require('console')
+const getConversation = require('../helpers/getConversation')
 
 
 const app = express()
@@ -103,8 +104,8 @@ io.on('connection',async(socket)=>{
         ]
     }).populate('message').sort({ updatedAt: -1});    //sort message in decreasing order
   
-    io.to(data?.sender).emit('message',getConversationMessage.message)
-    io.to(data?.receiver).emit('message',getConversationMessage.message)
+    io.to(data?.sender).emit('message',getConversationMessage?.message || [])
+    io.to(data?.receiver).emit('message',getConversationMessage?.message || [])
     // console.log("conversation  : ",conversation)
     // console.log("new message  : ",data)
    })
@@ -112,28 +113,9 @@ io.on('connection',async(socket)=>{
     //  sidebar
     socket.on('sidebar',async(currentUserId)=>{
         console.log("current user id ",currentUserId)
-
-        const currentUserConversation= await ConversationModel.find({
-            "$or": [
-                {sender:currentUserId},
-                {receiver:currentUserId} 
-            ]
-        }).sort({ updatedAt: -1 }).populate('message').populate('sender').populate('receiver')
-
-        console.log("currentUserConversation",currentUserConversation)
-         
-        
-        const conversation = currentUserConversation.map((conv)=>{
-        const countUnseenMsg = conv.message.reduce((preve,curr) => preve + (curr.seen ? 0 : 1),0)
-            return{
-                _id:conv?._id,
-                sender:conv?.sender,
-                receiver:conv?.receiver,
-                unseenMsg : countUnseenMsg,
-                lastMsg : conv.message[conv?.message?.length - 1]
-            }
-        })
-        socket.emit("conversation",conversation)
+        const conversation = await getConversation(currentUserId)
+        socket.emit("conversation",conversation)   
+     
     })
     // disconnect 
     socket.on('disconnect',()=>{
