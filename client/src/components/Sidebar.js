@@ -150,7 +150,7 @@ return (
                                                 )
                                              }
                                         </div>
-                                       <p>{conv?.lastMsg?.text }</p>
+                                       <p className='text-ellipsis line-clamp-1'>{conv?.lastMsg?.text }</p>
                                         </div>
                                         </div>
                                         <p className='text-xs p-1 ml-auto w-6 h-6 flex justify-center bg-primary text-white rounded-full font-semibold'>{conv?.unseenMsg}</p>

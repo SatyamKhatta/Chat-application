@@ -108,6 +108,13 @@ io.on('connection',async(socket)=>{
     io.to(data?.receiver).emit('message',getConversationMessage?.message || [])
     // console.log("conversation  : ",conversation)
     // console.log("new message  : ",data)
+       
+    // send conversation
+    const conversationSender = await getConversation(data?.sender)
+    const conversationReceiver = await getConversation(data?.receiver)
+    
+    io.to(data?.sender).emit('conversation',conversationSender)
+    io.to(data?.receiver).emit('conversation',conversationReceiver)
    })
 
     //  sidebar
